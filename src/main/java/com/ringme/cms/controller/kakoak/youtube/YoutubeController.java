@@ -96,7 +96,6 @@ public class YoutubeController {
         }
         return "redirect:/youtube/get/" + page + "?pageSize=" + pageSize;
     }
-
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute("model") Video_clawer_infoDto dto, Errors error, RedirectAttributes redirectAttributes) {
         log.info("---SAVE DTO---|" + dto);
@@ -110,8 +109,6 @@ public class YoutubeController {
             }
             object.setType(dto.getType());
             object.setUrl(dto.getUrl());
-            object.setMsisdn(dto.getMsisdn());
-            object.setCategoryId(dto.getCategoryId());
             object.setCreated_at(new Date());
             object.setTotal_video(dto.getTotal_video());
             youtubeService.save(object);
