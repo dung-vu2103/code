@@ -60,7 +60,6 @@ public class YoutubeController {
         }
 
         Video_clawer_infoDto video_clawer_infoDto = youtubeService.processSearch(type);
-
         Page<VideoClawerInfo> oblectPage = youtubeService.getAll(video_clawer_infoDto, page, pageSize);
         List<VideoClawerInfo> videoClawerInfos = oblectPage.toList();
         model.addAttribute("currentPage", page);
@@ -89,7 +88,7 @@ public class YoutubeController {
         if (pageSize == null)
             pageSize = 10;
         try {
-            log.info("frffhfhff" +id);
+            log.info("frffhfhff" + id);
             youtubeService.delete(id);
             redirectAttributes.addFlashAttribute("success", messageSource.getMessage("title.delete.success", null, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
@@ -146,139 +145,130 @@ public class YoutubeController {
         return "youtube/form";
     }
 
-
-    @GetMapping("/save1")
-    public String download(@RequestParam("url") String url, @RequestParam("video_crawler_info_id") Integer video_crawler_info_id,
-                        @RequestParam("total_video") Integer total_video,RedirectAttributes redirectAttributes) {
-        if (url.contains("https://www.youtube.com/watch?v=")) {
-            boolean check = false;
-            List<String> checkUrl = videoCrawlerItemService.getUrl();
-            for (String u : checkUrl) {
-                if (u.contains(url)) {
-                    check = true;
-                    break;
-                }
-            }
-            if (!check) {
-
-                String commandTemplate = appConfiguration.getDeviceDownload()+" -o "+appConfiguration.getFolderPath()+"%(title)s.%(ext)s " + url; //--sleep-interval 360
-               log.info("urllll" + commandTemplate);
-                try {
-                    Process proc = Runtime.getRuntime().exec(commandTemplate);
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-                    List<String> lines = new ArrayList<>();
-                    String s;
-                    while ((s = reader.readLine()) != null) {
-                        lines.add(s);
-                    }
-
-                    log.info("mediaaa" + lines);
-                    String mediaPath = "";
-                    for (String path : lines) {
-                        if (path.contains("D\\luu\\")) {
-                            mediaPath = path;
-                        }
-                    }
-                    log.info("media" +  mediaPath);
-                    VideoCrawerItem videoCrawler = new VideoCrawerItem();
-
-                    videoCrawler.setDownload_time(new Date());
-                    videoCrawler.setUrl_video_item(url);
-                    videoCrawler.setId_video_info(video_crawler_info_id);
-                    int count1 = mediaPath.indexOf(" ");
-
-                    videoCrawler.setMedia_path(mediaPath.substring(count1 + 1).trim());
-
-                    videoCrawler.setStatus(2);
-                    int count2 = mediaPath.lastIndexOf("\\");
-                    videoCrawler.setTitle(Validation.validateFileName(mediaPath.substring(count2 + 1).trim()));
-                    videoCrawler.setVideo_crawler_info_id(video_crawler_info_id);
-                    log.info("11111167890-98765432");
-                    videoCrawlerItemService.save(videoCrawler);
-                } catch (Exception e) {
-                    log.info("FALSE : " + e);
-
-                }
-            }
-
-        } else {
-            String commandTemplate = appConfiguration.getDeviceDownload()+" --skip-download --flat-playlist --dump-json --playlist-start 1 --playlist-end "+total_video+" " + url; //--sleep-interval 360
-
-            try {
-                Process proc = Runtime.getRuntime().exec(commandTemplate);
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-
-                List<String> lines = new ArrayList<>();
-                String s;
-                while ((s = reader.readLine()) != null) {
-                    lines.add(s);
-
-                }
-
-                List<String> idVideo = new ArrayList<>(); // find ID video
-                ObjectMapper objectMapper = new ObjectMapper();
-                for (String line : lines) {
-                    JsonNode jsonNode = objectMapper.readTree(line);
-                    String id = jsonNode.get("id").asText();
-
-                    idVideo.add(id);
-                }
-                log.info("IdVide|DATA|" + idVideo);
-                List<String> checkId = videoCrawlerItemService.getId();
-
-                for (String id : idVideo) {
-                    if (checkId.contains(id)) {
-                        continue;
-                    } else {
-                        String commandTemplate1 = appConfiguration.getDeviceDownload()+" -o "+appConfiguration.getFolderPath()+"%(title)s.%(ext)s %SOURCE_PATH%"; //--sleep-interval 360
-
-                        String command1 = commandTemplate1.replace("%SOURCE_PATH%", "https://www.youtube.com/watch?v=" + id);
-
-                        Process proc1 = Runtime.getRuntime().exec(command1);
-                        BufferedReader reader1 = new BufferedReader(new InputStreamReader(proc1.getInputStream()));
-                        List<String> line1s = new ArrayList<>();
-                        String l;
-                        while ((l = reader1.readLine()) != null) {
-                            line1s.add(l);
-                        }
-                        int count1=0;
-
-                        String mediaPath = ""; //Find String contains [download] Destination:
-                        for (String path : line1s) {
-                            if (path.contains("[download] D:\\luu\\")) {
-                                mediaPath = path;
-                                count1 = mediaPath.indexOf(" ");
-                            } else if (path.contains("Destination: ")) {
-                                mediaPath = path;
-                                count1 = mediaPath.indexOf(" ");
-                            }
-                        }
-                        log.info("media" + mediaPath);
-
-                        VideoCrawerItem videoCrawler = new VideoCrawerItem();
-
-                        videoCrawler.setDownload_time(new Date());
-                        videoCrawler.setId_video_info(video_crawler_info_id);
-
-
-                        videoCrawler.setMedia_path(mediaPath.substring(count1 + 1).trim());
-
-                        videoCrawler.setStatus(2);
-                        int count2 = mediaPath.lastIndexOf("\\");
-                        videoCrawler.setTitle(Validation.validateFileName(mediaPath.substring(count2 + 1).trim()));
-                        videoCrawler.setUrl_video_item("https://www.youtube.com/watch?v=" + id);
-                        videoCrawler.setId_string(id);
-                        videoCrawler.setVideo_crawler_info_id(video_crawler_info_id);
-                        videoCrawlerItemService.save(videoCrawler);
-                    }
-                }
-            } catch (Exception e) {
-                log.error("error" + e.getMessage(), e);
-            }
-        }
-        redirectAttributes.addFlashAttribute("success", messageSource.getMessage("success.download.create", null, LocaleContextHolder.getLocale()));
-        return "redirect:/youtube/get";
-    }
+//    @GetMapping("/save1")
+//    public String download(@RequestParam("url") String url, @RequestParam("video_crawler_info_id") Integer video_crawler_info_id,
+//                           @RequestParam("total_video") Integer total_video, RedirectAttributes redirectAttributes) {
+//        if (url.contains("https://www.youtube.com/watch?v=")) {
+//            boolean check = false;
+//            List<String> checkUrl = videoCrawlerItemService.getUrl();
+//            for (String u : checkUrl) {
+//                if (u.contains(url)) {
+//                    check = true;
+//                    break;
+//                }
+//            }
+//            if (!check) {
+//                String commandTemplate = appConfiguration.getDeviceDownload() + " -o " + appConfiguration.getFolderPath() + "%(title)s.%(ext)s " + url; //--sleep-interval 360
+//                log.info("urllll" + commandTemplate);
+//                try {
+//                    Process proc = Runtime.getRuntime().exec(commandTemplate);
+//
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+//                    List<String> lines = new ArrayList<>();
+//                    String s;
+//                    while ((s = reader.readLine()) != null) {
+//                        lines.add(s);
+//                    }
+//                    log.info("mediaaa" + lines);
+//                    int count1=0;
+//                    String mediaPath = "";
+//                    for (String path : lines) {
+//                        if (path.contains("[download] D:\\luu\\")) {
+//                            mediaPath = path;
+//                            count1 = mediaPath.indexOf(" ");
+//                        }
+//                    }
+//                    log.info("media" + mediaPath);
+//                    VideoCrawerItem videoCrawler = new VideoCrawerItem();
+//                    videoCrawler.setDownload_time(new Date());
+//                    videoCrawler.setUrl_video_item(url);
+//                    videoCrawler.setId_video_info(video_crawler_info_id);
+//
+//                    videoCrawler.setMedia_path(mediaPath.substring(count1 + 1).trim());
+//                    videoCrawler.setStatus(2);
+//                    int count2 = mediaPath.lastIndexOf("\\");
+//                    videoCrawler.setTitle(Validation.validateFileName(mediaPath.substring(count2 + 1).trim()));
+//                    videoCrawler.setVideo_crawler_info_id(video_crawler_info_id);
+//                    videoCrawlerItemService.save(videoCrawler);
+//                } catch (Exception e) {
+//                    log.info("FALSE : " + e);
+//
+//                }
+//            }
+//        } else {
+//            String commandTemplate = appConfiguration.getDeviceDownload() + " --skip-download --flat-playlist --dump-json --playlist-start 1 --playlist-end " + total_video + " " + url; //--sleep-interval 360
+//
+//            try {
+//                Process proc = Runtime.getRuntime().exec(commandTemplate);
+//
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+//                List<String> lines = new ArrayList<>();
+//                String s;
+//                while ((s = reader.readLine()) != null) {
+//                    lines.add(s);
+//
+//                }
+//                List<String> idVideo = new ArrayList<>(); // find ID video
+//                ObjectMapper objectMapper = new ObjectMapper();
+//                for (String line : lines) {
+//                    JsonNode jsonNode = objectMapper.readTree(line);
+//                    String id = jsonNode.get("id").asText();
+//
+//                    idVideo.add(id);
+//                }
+//                log.info("IdVide|DATA|" + idVideo);
+//                List<String> checkId = videoCrawlerItemService.getId();
+//
+//                for (String id : idVideo) {
+//                    if (checkId.contains(id)) {
+//                        continue;
+//                    } else {
+//                        String commandTemplate1 = appConfiguration.getDeviceDownload() + " -o " + appConfiguration.getFolderPath() + "%(title)s.%(ext)s %SOURCE_PATH%"; //--sleep-interval 360
+//
+//                        String command1 = commandTemplate1.replace("%SOURCE_PATH%", "https://www.youtube.com/watch?v=" + id);
+//
+//                        Process proc1 = Runtime.getRuntime().exec(command1);
+//                        BufferedReader reader1 = new BufferedReader(new InputStreamReader(proc1.getInputStream()));
+//                        List<String> line1s = new ArrayList<>();
+//                        String l;
+//                        while ((l = reader1.readLine()) != null) {
+//                            line1s.add(l);
+//                        }
+//                        int count1 = 0;
+//                        String mediaPath = ""; //Find String contains [download] Destination:
+//                        for (String path : line1s) {
+//                            if (path.contains("[download] D:\\luu\\")) {
+//                                mediaPath = path;
+//                                count1 = mediaPath.indexOf(" ");
+//                            } else if (path.contains("Destination: ")) {
+//                                mediaPath = path;
+//                                count1 = mediaPath.indexOf(" ");
+//                            }
+//                        }
+//                        log.info("media" + mediaPath);
+//
+//                        VideoCrawerItem videoCrawler = new VideoCrawerItem();
+//
+//                        videoCrawler.setDownload_time(new Date());
+//                        videoCrawler.setId_video_info(video_crawler_info_id);
+//
+//
+//                        videoCrawler.setMedia_path(mediaPath.substring(count1 + 1).trim());
+//
+//                        videoCrawler.setStatus(2);
+//                        int count2 = mediaPath.lastIndexOf("\\");
+//                        videoCrawler.setTitle(Validation.validateFileName(mediaPath.substring(count2 + 1).trim()));
+//                        videoCrawler.setUrl_video_item("https://www.youtube.com/watch?v=" + id);
+//                        videoCrawler.setId_string(id);
+//                        videoCrawler.setVideo_crawler_info_id(video_crawler_info_id);
+//                        videoCrawlerItemService.save(videoCrawler);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                log.error("error" + e.getMessage(), e);
+//            }
+//        }
+//        redirectAttributes.addFlashAttribute("success", messageSource.getMessage("success.download.create", null, LocaleContextHolder.getLocale()));
+//        return "redirect:/youtube/get";
+//    }
 }

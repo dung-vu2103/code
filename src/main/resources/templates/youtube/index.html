@@ -60,8 +60,6 @@
                             <th class="text-center" scope="col" th:text="#{status}"></th>
                             <th class="text-center" scope="col" th:text="#{title}"></th>
                             <th class="text-center" scope="col" th:text="#{total_video}"></th>
-                            <th class="text-center" scope="col" th:text="#{current_video}"></th>
-                            <th class="text-center" scope="col" th:text="#{channel_id}"></th>
                             <th class="text-center" scope="col" th:text="#{created_at}"></th>
                             <th class="text-center" scope="col" th:text="#{action}"></th>
                         </tr>
@@ -90,8 +88,8 @@
                             <td th:text="${model.status}"></td>
                             <td th:text="${model.title}"></td>
                             <td th:text="${model.total_video}"></td>
-                            <td th:text="${model.current_video}"></td>
-                            <td th:text="${model.channel_id}"></td>
+
+
                             <td th:text="${model.created_at}"></td>
                             <td class="text-center">
                                 <div>
@@ -107,9 +105,9 @@
                                        style="cursor: pointer;" type="button" class="btn" title="Delete">
                                         <i class="fas fa-trash-alt" style="color: #ff0000;"></i>
                                     </a>
-                                    <a th:href="@{'/youtube/save1?url=' + ${model.url} + '&video_crawler_info_id=' + ${model.id_video_info} + '&total_video=' + ${model.total_video}}" class="btn" title="Update">
-                                        <i class="fas fa-download" style="color: #00709e;"></i>
-                                    </a>
+<!--                                    <a th:href="@{'/youtube/save1?url=' + ${model.url} + '&video_crawler_info_id=' + ${model.id_video_info} + '&total_video=' + ${model.total_video}}" class="btn" title="Update">-->
+<!--                                        <i class="fas fa-download" style="color: #00709e;"></i>-->
+<!--                                    </a>-->
 
                                 </div>
                             </td>
@@ -181,14 +179,8 @@
                                 <th style="text-align: left;" th:text="#{total_video}"></th>
                                 <td style="text-align: left;" th:text="${model.total_video}"></td>
                             </tr>
-                            <tr>
-                                <th style="text-align: left;" th:text="#{current_video}"></th>
-                                <td style="text-align: left;" th:text="${model.current_video}"></td>
-                            </tr>
-                            <tr>
-                                <th style="text-align: left;" th:text="#{channel_id}"></th>
-                                <td style="text-align: left;" th:text="${model.channel_id}"></td>
-                            </tr>
+
+
                             <tr>
                                 <th style="text-align: left;" th:text="#{created_at}"></th>
                                 <td style="text-align: left;" th:text="${model.created_at}"></td>
