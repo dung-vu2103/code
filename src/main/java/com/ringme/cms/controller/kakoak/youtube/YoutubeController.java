@@ -176,18 +176,20 @@ public class YoutubeController {
                     log.info("mediaaa" + lines);
                     String mediaPath = "";
                     for (String path : lines) {
-                        if (path.contains("Destination: ")) {
+                        if (path.contains("D\\luu\\")) {
                             mediaPath = path;
                         }
                     }
+                    log.info("media" +  mediaPath);
                     VideoCrawerItem videoCrawler = new VideoCrawerItem();
-                    log.info("1111117 ");
+
                     videoCrawler.setDownload_time(new Date());
                     videoCrawler.setUrl_video_item(url);
                     videoCrawler.setId_video_info(video_crawler_info_id);
-                    int count1 = mediaPath.indexOf(":");
+                    int count1 = mediaPath.indexOf(" ");
+
                     videoCrawler.setMedia_path(mediaPath.substring(count1 + 1).trim());
-                    log.info("wwwwwwww " + mediaPath.substring(count1 + 1).trim());
+
                     videoCrawler.setStatus(2);
                     int count2 = mediaPath.lastIndexOf("\\");
                     videoCrawler.setTitle(Validation.validateFileName(mediaPath.substring(count2 + 1).trim()));
@@ -201,8 +203,8 @@ public class YoutubeController {
             }
 
         } else {
-            String commandTemplate = "D:/luu/yt-dlp.exe --skip-download --flat-playlist --dump-json --playlist-start 1 --playlist-end "+total_video+" " + url; //--sleep-interval 360
-            log.info("urllll" + commandTemplate);
+            String commandTemplate = appConfiguration.getDeviceDownload()+" --skip-download --flat-playlist --dump-json --playlist-start 1 --playlist-end "+total_video+" " + url; //--sleep-interval 360
+
             try {
                 Process proc = Runtime.getRuntime().exec(commandTemplate);
 
@@ -214,13 +216,13 @@ public class YoutubeController {
                     lines.add(s);
 
                 }
-                log.info("1111113" +lines );
+
                 List<String> idVideo = new ArrayList<>(); // find ID video
                 ObjectMapper objectMapper = new ObjectMapper();
                 for (String line : lines) {
                     JsonNode jsonNode = objectMapper.readTree(line);
                     String id = jsonNode.get("id").asText();
-                    log.info("idddddd" + id);
+
                     idVideo.add(id);
                 }
                 log.info("IdVide|DATA|" + idVideo);
@@ -230,10 +232,10 @@ public class YoutubeController {
                     if (checkId.contains(id)) {
                         continue;
                     } else {
-                        String commandTemplate1 = "D:/luu/yt-dlp.exe -o D:/luu/%(title)s.%(ext)s %SOURCE_PATH%"; //--sleep-interval 360
+                        String commandTemplate1 = appConfiguration.getDeviceDownload()+" -o "+appConfiguration.getFolderPath()+"%(title)s.%(ext)s %SOURCE_PATH%"; //--sleep-interval 360
 
                         String command1 = commandTemplate1.replace("%SOURCE_PATH%", "https://www.youtube.com/watch?v=" + id);
-                        log.info("urllll111111111111" + command1);
+
                         Process proc1 = Runtime.getRuntime().exec(command1);
                         BufferedReader reader1 = new BufferedReader(new InputStreamReader(proc1.getInputStream()));
                         List<String> line1s = new ArrayList<>();
@@ -241,13 +243,16 @@ public class YoutubeController {
                         while ((l = reader1.readLine()) != null) {
                             line1s.add(l);
                         }
-                        log.info("line111111" + line1s);
+                        int count1=0;
+
                         String mediaPath = ""; //Find String contains [download] Destination:
                         for (String path : line1s) {
                             if (path.contains("[download] D:\\luu\\")) {
                                 mediaPath = path;
+                                count1 = mediaPath.indexOf(" ");
                             } else if (path.contains("Destination: ")) {
                                 mediaPath = path;
+                                count1 = mediaPath.indexOf(" ");
                             }
                         }
                         log.info("media" + mediaPath);
@@ -256,9 +261,10 @@ public class YoutubeController {
 
                         videoCrawler.setDownload_time(new Date());
                         videoCrawler.setId_video_info(video_crawler_info_id);
-                        int count1 = mediaPath.indexOf(":");
+
+
                         videoCrawler.setMedia_path(mediaPath.substring(count1 + 1).trim());
-                        log.info("wwwwwwww " + mediaPath.substring(count1 + 1).trim());
+
                         videoCrawler.setStatus(2);
                         int count2 = mediaPath.lastIndexOf("\\");
                         videoCrawler.setTitle(Validation.validateFileName(mediaPath.substring(count2 + 1).trim()));
