@@ -173,7 +173,7 @@ public class YoutubeController {
 //                    int count1=0;
 //                    String mediaPath = "";
 //                    for (String path : lines) {
-//                        if (path.contains("[download] D:\\luu\\")) {
+//                        if (path.contains("D:\\luu\\")) {
 //                            mediaPath = path;
 //                            count1 = mediaPath.indexOf(" ");
 //                        }
