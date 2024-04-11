@@ -55,10 +55,7 @@
                             <th class="text-center" scope="col" th:text="#{type}"></th>
                             <th class="text-center" scope="col" th:text="#{url}"></th>
                             <th class="text-center" scope="col" th:text="#{active}"></th>
-                            <th class="text-center" scope="col" th:text="#{msisdn}"></th>
-                            <th class="text-center" scope="col" th:text="#{categoryId}"></th>
                             <th class="text-center" scope="col" th:text="#{status}"></th>
-                            <th class="text-center" scope="col" th:text="#{title}"></th>
                             <th class="text-center" scope="col" th:text="#{total_video}"></th>
                             <th class="text-center" scope="col" th:text="#{created_at}"></th>
                             <th class="text-center" scope="col" th:text="#{action}"></th>
@@ -83,10 +80,7 @@
                                 <span th:if="${model.active == 1}" th:text="#{no}"></span>
                                 <span th:if="${model.active == 2}" th:text="#{error}"></span>
                             </td>
-                            <td th:text="${model.msisdn}"></td>
-                            <td th:text="${model.categoryId}"></td>
                             <td th:text="${model.status}"></td>
-                            <td th:text="${model.title}"></td>
                             <td th:text="${model.total_video}"></td>
 
 
@@ -158,29 +152,14 @@
                                     <span th:if="${model.active == 1}" th:text="#{lỗi}"></span>
                                 </td>
                             </tr>
-
-                            <tr>
-                                <th style="text-align: left;" th:text="#{msisdn}"></th>
-                                <td style="text-align: left;" th:text="${model.msisdn}"></td>
-                            </tr>
-                            <tr>
-                                <th style="text-align: left;" th:text="#{categoryId}"></th>
-                                <td style="text-align: left;" th:text="${model.categoryId}"></td>
-                            </tr>
                             <tr>
                                 <th style="text-align: left;" th:text="#{status}"></th>
                                 <td style="text-align: left;" th:text="${model.status}"></td>
                             </tr>
                             <tr>
-                                <th style="text-align: left;" th:text="#{title}"></th>
-                                <td style="text-align: left;" th:text="${model.title}"></td>
-                            </tr>
-                            <tr>
                                 <th style="text-align: left;" th:text="#{total_video}"></th>
                                 <td style="text-align: left;" th:text="${model.total_video}"></td>
                             </tr>
-
-
                             <tr>
                                 <th style="text-align: left;" th:text="#{created_at}"></th>
                                 <td style="text-align: left;" th:text="${model.created_at}"></td>
