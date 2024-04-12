@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
-
 @Log4j2
 @Controller
 @RequestMapping("/youtube")
@@ -50,15 +49,13 @@ public class YoutubeController {
     @GetMapping(value = {"/get", "/get/{page}"})
     private String index(@PathVariable(required = false) Integer page,
                          @RequestParam(name = "pageSize", required = false) Integer pageSize,
-                         @RequestParam(value = "type", required = false) String type
-            , Model model) {
+                         @RequestParam(value = "type", required = false) String type, Model model) {
         if (page == null) {
             page = 1;
         }
         if (pageSize == null) {
             pageSize = 10;
         }
-
         Video_clawer_infoDto video_clawer_infoDto = youtubeService.processSearch(type);
         Page<VideoClawerInfo> oblectPage = youtubeService.getAll(video_clawer_infoDto, page, pageSize);
         List<VideoClawerInfo> videoClawerInfos = oblectPage.toList();
@@ -70,14 +67,12 @@ public class YoutubeController {
         model.addAttribute("videoClawerInfos", videoClawerInfos);
         return "youtube/index";
     }
-
     @GetMapping("/view/{id}")
     public String detail(@PathVariable(name = "id") Integer id, Model model) {
         VideoClawerInfo object = youtubeService.findById(id);
         model.addAttribute("model", object);
         return "youtube/index::view_detail";
     }
-
     @GetMapping(value = {"/delete", "/delete/{page}"})
     public String delete(@PathVariable(required = false) Integer page,
                          @RequestParam(name = "pageSize", required = false) Integer pageSize,
@@ -141,7 +136,6 @@ public class YoutubeController {
         model.addAttribute("title", messageSource.getMessage("title.sticker.update", null, LocaleContextHolder.getLocale()));
         return "youtube/form";
     }
-
 //    @GetMapping("/save1")
 //    public String download(@RequestParam("url") String url, @RequestParam("video_crawler_info_id") Integer video_crawler_info_id,
 //                           @RequestParam("total_video") Integer total_video, RedirectAttributes redirectAttributes) {

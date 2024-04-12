@@ -50,7 +50,7 @@
                             <td th:text="${model.media_path}"></td>
                             <td class="text-center">
                                 <div>
-                                    <a th:attr="onclick=|deleteIcon('${model.id_video_item}', '${currentPage}', '${pageSize}','${model.id_video_info}')|"
+                                    <a th:attr="onclick=|deleteIcon('${model.id_video_item}', '${currentPage}', '${pageSize}','${model.video_crawler_info_id}')|"
                                        style="cursor: pointer;" type="button" class="btn" title="Delete">
                                         <i class="fas fa-trash-alt" style="color: #ff0000;">
                                         </i>
@@ -122,7 +122,7 @@
         var urlSearchParams = new URLSearchParams(urlPage);
         // Thay đổi giá trị của tham số pageSize
         urlSearchParams.set('pageSize', `[[${pageSize}]]`);
-         urlSearchParams.set('id_video_info', `[[${id_video_info}]]`);
+         urlSearchParams.set('video_crawler_info_id', `[[${video_crawler_info_id}]]`);
   console.log(6);
         var dem = 0;
         urlParram = '';
@@ -142,11 +142,11 @@
         window.location.href = newUrl;
     }
 
-    function deleteIcon(id_video_item, page, pageSize,id_video_info) {
+    function deleteIcon(id_video_item, page, pageSize,video_crawler_info_id) {
       console.log("id_video_item" +id_video_item);
       console.log("page" +page);
       console.log("id_video_info" +pageSize);
-      console.log("id_video_info" +id_video_info);
+
         if(page == null || page == "" || page == "null")
             page = 1;
         if(pageSize == null || pageSize == "" || pageSize == "null")
@@ -156,7 +156,7 @@
 
         $("#confirmDel").click(function() {
             $("#popup-delete").modal('hide');
-            window.location.href = `[[${@environment.getProperty('server.servlet.context-path')}]]/video/delete/${page}?id_video_item=${id_video_item}&pageSize=${pageSize}&id_video_info=${id_video_info}`;
+            window.location.href = `[[${@environment.getProperty('server.servlet.context-path')}]]/video/delete/${page}?id_video_item=${id_video_item}&pageSize=${pageSize}&video_crawler_info_id=${video_crawler_info_id}`;
         });
 
         $("#closeDel").click(function() {

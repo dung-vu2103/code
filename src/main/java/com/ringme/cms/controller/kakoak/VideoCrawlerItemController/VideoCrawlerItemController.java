@@ -29,15 +29,15 @@ public class VideoCrawlerItemController {
     @GetMapping(value = {"/index", "/index/{page}"})
     public String getAllPage(@PathVariable(required = false) Integer page,
                              @RequestParam(name = "pageSize", required = false) Integer pageSize,
-                             @RequestParam(name = "id_video_info") Integer id_video_info, Model model) {
+                             @RequestParam(name = "video_crawler_info_id") Integer video_crawler_info_id, Model model) {
         if(page == null)
             page = 1;
         if(pageSize == null)
             pageSize = 10;
-        Page<VideoCrawerItem> objectPage = videoCrawlerItemService.get(id_video_info, page, pageSize);
-        VideoClawerInfo user1 = videoClaweInfoService.findById(id_video_info);
+        Page<VideoCrawerItem> objectPage = videoCrawlerItemService.get(video_crawler_info_id, page, pageSize);
+        VideoClawerInfo user1 = videoClaweInfoService.findById(video_crawler_info_id);
         model.addAttribute("currentPage", page);
-        model.addAttribute("id_video_info", id_video_info);
+        model.addAttribute("video_crawler_info_id", video_crawler_info_id);
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("totalPages", objectPage.getTotalPages());
         model.addAttribute("totalItems", objectPage.getTotalElements());
@@ -65,7 +65,7 @@ public class VideoCrawlerItemController {
     public String delete(@PathVariable(required = false) Integer page,
                          @RequestParam(name = "pageSize", required = false) Integer pageSize,
                          @RequestParam(name = "id_video_item", required = false) Integer id_video_item,
-                         @RequestParam(name = "id_video_info", required = false) Integer id_video_info,
+                         @RequestParam(name = "video_crawler_info_id", required = false) Integer video_crawler_info_id,
                          RedirectAttributes redirectAttributes) {
         if(page == null)
             page = 1;
@@ -74,6 +74,6 @@ public class VideoCrawlerItemController {
         log.info("iddd" +id_video_item);
         videoCrawlerItemService.delete(id_video_item);
         redirectAttributes.addFlashAttribute("success", messageSource.getMessage("title.delete.success", null, LocaleContextHolder.getLocale()));
-        return "redirect:/video/index/" +page + "?pageSize=" + pageSize + "&id_video_info=" + id_video_info;
+        return "redirect:/video/index/" +page + "?pageSize=" + pageSize + "&video_crawler_info_id=" + video_crawler_info_id;
     }
 }

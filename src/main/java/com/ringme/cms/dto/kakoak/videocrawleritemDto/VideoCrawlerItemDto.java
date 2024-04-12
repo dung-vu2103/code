@@ -20,6 +20,5 @@ public class VideoCrawlerItemDto {
 
     private Integer status;
 
-    private Integer id_video_info;
     private String id_string;
 }

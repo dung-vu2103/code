@@ -33,8 +33,6 @@ public class VideoCrawerItem implements Serializable {
     private Integer status;
     @Column(name = "media_path")
     private String media_path;
-    @Column(name = "id_video_info")
-    private Integer id_video_info;
     @Column(name = "id_string")
     private String id_string;
 
